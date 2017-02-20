@@ -9,11 +9,11 @@ namespace Matrix
         /// Return Type: HANDLE->void*
         ///nStdHandle: DWORD->unsigned int
         [System.Runtime.InteropServices.DllImportAttribute("kernel32.dll", EntryPoint = "GetStdHandle")]
-        public static extern System.IntPtr GetStdHandle(Int32 nStdHandle);
+        internal static extern IntPtr GetStdHandle(Int32 nStdHandle);
 
         /// Return Type: BOOL->int
         [System.Runtime.InteropServices.DllImportAttribute("kernel32.dll", EntryPoint = "AllocConsole")]
         [return: System.Runtime.InteropServices.MarshalAsAttribute(System.Runtime.InteropServices.UnmanagedType.Bool)]
-        public static extern bool AllocConsole();
+        internal static extern bool AllocConsole();
     }
 }
