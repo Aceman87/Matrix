@@ -7,29 +7,48 @@ namespace Matrix
     {
         // fields
         static Random rand = new Random();
-        static String matrixCode = "アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヰヱヲ";
+        readonly static int capSpace = 25;
+        readonly static int capStart = 65;
+        readonly static int normSpace = 25;
+        readonly static int normStart = 97;
+        readonly static int rusSpace = 63;
+        readonly static int rusStart = 1040;
+        readonly static int numSpace = 9;
+        readonly static int numStart = 48;
 
         // properties
         static char printCharacter
         {
             get
             {
-                int t = rand.Next(10);
-                if (t <= 2)
-                    // returns a number
-                    return (char)('0' + rand.Next(10));
-                else if (t <= 4)
-                    // small letter
-                    return (char)('a' + rand.Next(27));
-                else if (t <= 6)
-                    // capital letter
-                    return (char)('A' + rand.Next(27));
-                else
-                    return matrixCode[rand.Next(matrixCode.Length)];
+                int space = rand.Next(4);
+                int index;
+
+                switch (space)
+                {
+                    case 0:
+                        index = rand.Next(capSpace);
+                        return Convert.ToChar(capStart + index);
+                    case 1:
+                        index = rand.Next(normSpace);
+                        return Convert.ToChar(normStart + index);
+                    case 2:
+                        index = rand.Next(rusSpace);
+                        return Convert.ToChar(rusStart + index);
+                    case 3:
+                        index = rand.Next(numSpace);
+                        return Convert.ToChar(numStart + index);
+                    default:
+                        return '\u0041';
+                }
+
+                // debug, letter A
+                //return '\u0041';
             }
         }
 
         // methods
+        [STAThread]
         static void Main()
         {
 
@@ -37,15 +56,19 @@ namespace Matrix
             {
                 System.Diagnostics.Debug.WriteLine("Console allocation successfully!");
                 IntPtr stdHandle = NativeMethods.GetStdHandle(NativeMethods.STD_OUTPUT_HANDLE);
+                
+                // set the console to Lucida true type
+                Console_Font_Helper.SetLucida(stdHandle);
 
-                var fonts = ConsoleHelper.ConsoleFonts;
-                ConsoleHelper.SetConsoleFont(5);
-
-                Console.OutputEncoding = new UTF8Encoding();
+                Console.Title = "Matrix Digital Rain";
+                Console.OutputEncoding = Encoding.UTF8;
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.WindowLeft = Console.WindowTop = 0;
-                Console.WindowHeight = Console.BufferHeight = Console.LargestWindowHeight;
-                Console.WindowWidth = Console.BufferWidth = Console.LargestWindowWidth;
+                // pretty unprecise way of fitting in view
+                Console.BufferHeight = (Console.LargestWindowHeight - 2);
+                Console.BufferWidth = (Console.LargestWindowWidth - 2);
+                Console.WindowHeight = (Console.LargestWindowHeight - 2);
+                Console.WindowWidth = (Console.LargestWindowWidth - 2);
                 Console.WriteLine("Hit Any Key To Continue");
                 Console.ReadKey();
                 Console.CursorVisible = false;
@@ -54,7 +77,6 @@ namespace Matrix
                 // setup array of starting y values
                 int[] y;
 
-                // width was 209, height was 81
                 // setup the screen and initial conditions of y
                 Initialize(out width, out height, out y);
 
@@ -81,7 +103,8 @@ namespace Matrix
                 // the bright green character
                 Console.ForegroundColor = ConsoleColor.Green;
                 Console.SetCursorPosition(x, y[x]);
-                Console.Write(printCharacter);
+                char a = printCharacter;
+                Console.Write(a);
 
                 // the dark green character -  2 positions above the bright green character
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
